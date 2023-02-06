@@ -37,76 +37,73 @@ end
 // for inv_din these are the values assigned to in the first always block when you inverse or don't
 	
 always_comb begin
+	mmux21 = 0;
+	mmux31 = 0;
+	mmux71 = 0;
 
-mmux21 = 0;
-mmux31 = 0;
-mmux71 = 0;
+	//Right Shift: select = 0, direction = 0
+	if((select == 0) && (direction == 0)) begin
+		mmux21 = 0;
+		mmux31 = 0;
+		mmux71 = 0;
+	end
+	
+	//Right Rotate: select = 1, direction = 0
+	if((select == 1) && (direction == 0)) begin
+		mmux21 = inv_din[0];
+		mmux31 = inv_din[1];
+		if(shift_value[1]) begin
+			mmux71 = inv_din[2];
+		end else begin
+			mmux71 = inv_din[0];
+		end
+	end
 
-//Right Shift: select = 0, direction = 0
-if((select == 0) && (direction == 0)) begin
-mmux21 = 0;
-mmux31 = 0;
-mmux71 = 0;
-end
+	//Left Shift: select = 0, direction = 1
+	if((select == 0) && (direction == 1)) begin
+		mmux21 = 0;
+		mmux31 = 0;
+		mmux71 = 0;
+	end
 
-
-//Right Rotate: select = 1, direction = 0
-if((select == 1) && (direction == 0)) begin
-mmux21 = inv_din[0];
-mmux31 = inv_din[1];
-if(shift_value[1]) begin
-mmux71 = inv_din[2];
-end else begin
-mmux71 = inv_din[0];
-end
-end
-
-
-//Left Shift: select = 0, direction = 1
-if((select == 0) && (direction == 1)) begin
-mmux21 = 0;
-mmux31 = 0;
-mmux71 = 0;
-end
-
-//Left Rotate: select = 1, direction = 1
-if((select == 1) && (direction == 1)) begin
-mmux21 = inv_din[0];
-mmux31 = inv_din[1];
-if(shift_value[1]) begin
-mmux71 = inv_din[2];
-end else begin
-mmux71 = inv_din[0];
-end
-end
+	//Left Rotate: select = 1, direction = 1
+	if((select == 1) && (direction == 1)) begin
+		mmux21 = inv_din[0];
+		mmux31 = inv_din[1];
+		if(shift_value[1]) begin
+			mmux71 = inv_din[2];
+		end else begin
+			mmux71 = inv_din[0];
+		end
+	end
 end
 
 	
 // third always block the flips inv_dout to dout
 always_comb begin
-if(direction == 1) begin
-	dout[0] = inv_dout[3];
-	dout[1] = inv_dout[2];  
-	dout[2] = inv_dout[1];
-	dout[3] = inv_dout[0];
-end else begin
-	dout[0] = inv_dout[0];
-	dout[1] = inv_dout[1];  
-	dout[2] = inv_dout[2];
-	dout[3] = inv_dout[3];
-end
+	if(direction == 1) begin
+		dout[0] = inv_dout[3];
+		dout[1] = inv_dout[2];  
+		dout[2] = inv_dout[1];
+		dout[3] = inv_dout[0];
+	end else begin
+		dout[0] = inv_dout[0];
+		dout[1] = inv_dout[1];  
+		dout[2] = inv_dout[2];
+		dout[3] = inv_dout[3];
+	end
 end
 
 // i followed the dicussion slides when writing my code
 // mux connections
 // same connections in diagram from discussion slides
-mux_2x1 m0 (.in0(inv_din[0]),.in1(inv_din[2]),.sel(shift_value[1]),.out(mux0mux4));
-mux_2x1 m1 (.in0(inv_din[1]),.in1(inv_din[3]),.sel(shift_value[1]),.out(mux1mux5));
-mux_2x1 m2 (.in0(inv_din[2]),.in1(mmux21),.sel(shift_value[1]),.out(mux2mux6));
-mux_2x1 m3 (.in0(inv_din[3]),.in1(mmux31),.sel(shift_value[1]),.out(mux3mux7));
-mux_2x1 m4 (.in0(mux0mux4),.in1(mux1mux5),.sel(shift_value[0]),.out(inv_dout[3]));
-mux_2x1 m5 (.in0(mux1mux5),.in1(mux2mux6),.sel(shift_value[0]),.out(inv_dout[2]));
-mux_2x1 m6 (.in0(mux2mux6),.in1(mux3mux7),.sel(shift_value[0]),.out(inv_dout[1]));
-mux_2x1 m7 (.in0(mux3mux7),.in1(mmux71),.sel(shift_value[0]),.out(inv_dout[0]));
+mux_2x1 m0 (.in0(inv_din[0]),	.in1(inv_din[2]),	.sel(shift_value[1]),	.out(mux0mux4));
+mux_2x1 m1 (.in0(inv_din[1]),	.in1(inv_din[3]),	.sel(shift_value[1]),	.out(mux1mux5));
+mux_2x1 m2 (.in0(inv_din[2]),	.in1(mmux21),		.sel(shift_value[1]),	.out(mux2mux6));
+mux_2x1 m3 (.in0(inv_din[3]),	.in1(mmux31),		.sel(shift_value[1]),	.out(mux3mux7));
+mux_2x1 m4 (.in0(mux0mux4),		.in1(mux1mux5),		.sel(shift_value[0]),	.out(inv_dout[3]));
+mux_2x1 m5 (.in0(mux1mux5),		.in1(mux2mux6),		.sel(shift_value[0]),	.out(inv_dout[2]));
+mux_2x1 m6 (.in0(mux2mux6),		.in1(mux3mux7),		.sel(shift_value[0]),	.out(inv_dout[1]));
+mux_2x1 m7 (.in0(mux3mux7),		.in1(mmux71),		.sel(shift_value[0]),	.out(inv_dout[0]));
 
 endmodule: barrel_shifter
