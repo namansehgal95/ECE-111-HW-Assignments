@@ -97,8 +97,9 @@ end else begin
 end
 end
 
-	
+// i followed the dicussion slides when writing my code
 // mux connections
+// same connections in diagram from discussion slides
 mux_2x1 m0 (.in0(inv_din[0]),.in1(inv_din[2]),.sel(shift_value[1]),.out(mux0mux4));
 mux_2x1 m1 (.in0(inv_din[1]),.in1(inv_din[3]),.sel(shift_value[1]),.out(mux1mux5));
 mux_2x1 m2 (.in0(inv_din[2]),.in1(mmux21),.sel(shift_value[1]),.out(mux2mux6));
