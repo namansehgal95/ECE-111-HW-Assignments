@@ -11,6 +11,8 @@ module barrel_shifter (
 // setting wires
   logic [3:0] inv_din;
   logic [3:0] inv_dout;
+//mmux31,21,71 is a connection to input 1 of mux(number)
+//mux0mux4 is a connection from output of mux0 to mux4 and so on
   logic mmux31, mmux21, mmux71, mux0mux4, mux1mux5, mux2mux6, mux3mux7;
 
 // first of three always blocks. This block just inverts the din coming into the barrel shifter if it is going left. 
